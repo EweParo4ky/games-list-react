@@ -1,21 +1,48 @@
+import Form from 'react-bootstrap/Form';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
 const TextArea = () => {
+  const dataUrl = 'https://notes-2a82e-default-rtdb.firebaseio.com';
+  const [text, setText] = useState('');
+  console.log(text, 'text control');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${dataUrl}/myGames.json`);
+        console.log(response, 'response');
+        console.log(response.data, 'data from FB');
+        setText(response.data.text);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
-    <div
-      className='cardContainer overflow-auto d-flex'
-      style={{ height: '400px', width: '400px' }}
-    >
-      <div>
-        <label
-          htmlFor='exampleFormControlTextarea1'
-          className='form-label'
-        ></label>
-        <textarea
-          className='form-control d-flex overflow-auto h-100 w-100'
-          id='exampleFormControlTextarea1'
-          style={{ width: '100%', height: '400px' }}
-        ></textarea>
-      </div>
-    </div>
+    <Form>
+      <Form.Group
+        className='mb-3'
+        controlId='exampleForm.ControlTextarea1'
+        style={{ height: '400px', width: '400px' }}
+      >
+        <Form.Control
+          as='textarea'
+          style={{
+            height: '100%',
+            width: '100%',
+            resize: 'none',
+            backgroundColor: '#282c34',
+            color: 'white',
+            fontWeight: 'bold',
+          }}
+          onChange={e => setText(e.target.value)}
+          value={text}
+        />
+      </Form.Group>
+    </Form>
   );
 };
 
