@@ -40,7 +40,7 @@ const TextArea = () => {
       <Form.Group
         className='d-flex flex-column mb-0'
         controlId='exampleForm.ControlTextarea1'
-        style={{ height: '700px', width: '400px' }}
+        style={{ height: '700px', width: '350px' }}
       >
         <Form.Control
           as='textarea'
