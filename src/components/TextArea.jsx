@@ -1,12 +1,12 @@
 import { Form, Button } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { animateScroll as scroll } from 'react-scroll';
 import axios from 'axios';
 
 const TextArea = () => {
   const dataUrl = 'https://notes-2a82e-default-rtdb.firebaseio.com';
   const [text, setText] = useState('');
   const [isSaved, setSaved] = useState(false);
-  console.log(text, 'text control');
   const newList = { text };
 
   const handleSubmit = async e => {
@@ -20,13 +20,17 @@ const TextArea = () => {
     });
   };
 
+  const counter = (str, char) => {
+    return str.split(char).length - 1;
+  };
+
+  const textAreaRef = useRef(null);
+
   useEffect(() => {
     setSaved(false);
     const fetchData = async () => {
       try {
         const response = await axios.get(`${dataUrl}/myGames.json`);
-        console.log(response, 'response');
-        console.log(response.data, 'data from FB');
         setText(response.data.text);
       } catch (error) {
         console.error(error);
@@ -35,14 +39,39 @@ const TextArea = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (textAreaRef) {
+      const textarea = textAreaRef.current;
+      textarea.focus();
+    }
+    scroll.scrollToBottom({ containerId: 'games-list', delay: 0, duration: 0 });
+  }, [text.length]);
+
   return (
     <Form onSubmit={e => handleSubmit(e)}>
       <Form.Group
         className='d-flex flex-column mb-0'
-        controlId='exampleForm.ControlTextarea1'
-        style={{ height: '700px', width: '350px' }}
+        // controlId='exampleForm.ControlTextarea1'
+        style={{ height: '700px', width: '350px', overflow: 'auto' }}
       >
+        <div
+          className='pb-1'
+          style={{
+            fontSize: '1.2rem',
+            backgroundColor: '#282c34',
+            color: 'white',
+            border: 'solid',
+            borderColor: 'white',
+            borderRadius: 'var(--bs-border-radius)',
+            borderWidth: '2px',
+            fontWeight: 'bold',
+          }}
+        >
+          {`Completed games: ${counter(text, '+')}`}
+        </div>
         <Form.Control
+          ref={textAreaRef}
+          id='games-list'
           as='textarea'
           autoComplete='off'
           style={{
@@ -58,7 +87,8 @@ const TextArea = () => {
         />
         <Button
           type='submit'
-          variant={isSaved ? 'light' : 'dark'}
+          disabled={isSaved}
+          variant={isSaved ? 'secondary' : 'dark'}
           style={{ borderColor: 'white', fontWeight: 'bold' }}
         >
           {isSaved ? 'Saved' : 'Save changes'}
