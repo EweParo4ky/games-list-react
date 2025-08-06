@@ -13,3 +13,28 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+/* .completed {
+  font-size: '1.2rem';
+  background-color: #282c34;
+  color: white;
+  border: solid;
+  border-color: white;
+  border-radius: var(--bs-border-radius);
+  border-width: 2px;
+  font-weight: bold;
+} */
+
+/* .area {
+  height: 100%;
+  width: 100%;
+  resize: none;
+  background-color: #282c34;
+  color: white;
+  font-weight: bold;
+} */
+
+.btn {
+color: rgb(33, 33, 73);
+border-color: white;
+font-Weight: bold;
+}

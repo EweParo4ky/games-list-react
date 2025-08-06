@@ -7,6 +7,7 @@ const TextArea = () => {
   const dataUrl = 'https://notes-2a82e-default-rtdb.firebaseio.com';
   const [text, setText] = useState('');
   const [isSaved, setSaved] = useState(false);
+  const [isCopied, setCopied] = useState(false);
   const newList = { text };
 
   const handleSubmit = async e => {
@@ -15,13 +16,27 @@ const TextArea = () => {
       setSaved(true);
       const timer = setTimeout(() => {
         setSaved(false);
-      }, 5000);
+      }, 3000);
       return () => clearTimeout(timer);
     });
   };
 
   const counter = (str, char) => {
     return str.split(char).length - 1;
+  };
+
+  const copyTextToClipboard = async data => {
+    try {
+      await navigator.clipboard.writeText(data).then(() => {
+        setCopied(true);
+        const timer = setTimeout(() => {
+          setCopied(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+      });
+    } catch (err) {
+      console.error('Ошибка:', err);
+    }
   };
 
   const textAreaRef = useRef(null);
@@ -55,11 +70,11 @@ const TextArea = () => {
         style={{ height: '700px', width: '350px', overflow: 'auto' }}
       >
         <div
-          className='pb-1'
+          className='completed pb-1'
           style={{
             fontSize: '1.2rem',
-            backgroundColor: '#282c34',
-            color: 'white',
+            backgroundColor: 'rgb(106, 115, 122)',
+            color: 'rgb(33, 33, 73)',
             border: 'solid',
             borderColor: 'white',
             borderRadius: 'var(--bs-border-radius)',
@@ -67,9 +82,10 @@ const TextArea = () => {
             fontWeight: 'bold',
           }}
         >
-          {`Completed games: ${counter(text, '+')}`}
+          <span>Completed games: {counter(text, '+')}</span>
         </div>
         <Form.Control
+          className='area'
           ref={textAreaRef}
           id='games-list'
           as='textarea'
@@ -86,10 +102,18 @@ const TextArea = () => {
           value={text}
         />
         <Button
+          className='btn'
+          onClick={() => copyTextToClipboard(newList.text)}
+          disabled={isCopied}
+          variant={isCopied ? 'dark' : 'secondary'}
+        >
+          {isCopied ? 'Copied' : 'Copy'}
+        </Button>
+        <Button
+          className='btn'
           type='submit'
           disabled={isSaved}
-          variant={isSaved ? 'secondary' : 'dark'}
-          style={{ borderColor: 'white', fontWeight: 'bold' }}
+          variant={isSaved ? 'dark' : 'secondary'}
         >
           {isSaved ? 'Saved' : 'Save changes'}
         </Button>
